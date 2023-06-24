@@ -7,7 +7,7 @@ import psycopg2
 
 def create_and_insert_product():
     connection = psycopg2.connect(
-        host ="localhost",
+        host="localhost",
         port=5432,
         database="products",
         user="postgres",
@@ -20,14 +20,14 @@ def create_and_insert_product():
     create_table_query = """
         CREATE TABLE IF NOT EXISTS varle_products (
         id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
+        name VARCHAR(500),
         price DECIMAL(10, 2),
         quantity INT
         )
     """
     # execute SQL statement
-    # cursor.execute(create_table_query)
-    # print("Table created successfully!")
+    cursor.execute(create_table_query)
+    print("Table created successfully!")
 
     # define website
     url = "https://www.varle.lt/nesiojami-kompiuteriai/nesiojami-kompiuteriai/"
@@ -39,7 +39,7 @@ def create_and_insert_product():
     soup = BeautifulSoup(response.content, 'html.parser') #soup kad galetume pasiimt produktu info
 
     # find all product elements in the category (ajax-container)
-    product_elements = soup.find_all('div', class_='ajax-container')
+    product_elements = soup.find_all('div', class_='GRID_ITEM')
     # print(product_elements)
 
 
@@ -53,6 +53,9 @@ def create_and_insert_product():
         insert_query = "INSERT INTO varle_products (name, price, quantity) VALUES (%s, %s, %s)"
         # %s - string formatu grazins reiksmes
         cursor.execute(insert_query, (product_name, product_price, product_quantity))
+
+        print(f"Adding products to the database: {product_name}")
+        print("Products inserted into database successfully!")
 
 
     connection.commit()
