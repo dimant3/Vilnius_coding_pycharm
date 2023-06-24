@@ -92,3 +92,5 @@
 # print(" " * (eilutes - 1), end="") # siuo atveju end="" perkelia i nauja eilute ir nurodo kur kuolas pasides
 # # daugina tarpus is eilutes - 1 (kas yra 5-1 = 4). Po 4 tarpu ir padeda | (kamiena)
 # print("|")
+
+
