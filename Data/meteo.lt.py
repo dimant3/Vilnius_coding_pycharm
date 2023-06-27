@@ -15,28 +15,44 @@ soup = BeautifulSoup(response.content, 'html.parser')  # soup kad galetume pasii
 # find all weather information in the class content city
 week_days = soup.find_all('span', class_='date')
 
-temperatures = soup.find_all('span', class_='big up-from-zero')
+temperatures = soup.find_all('span', class_='big up-from-zero')[::2]
 
-night_temp = [temperature.get_text() for temperature in temperatures[::2]]
+night_temp = [temperature.get_text() for temperature in temperatures]
 
 week_day = [day.get_text() for day in week_days]
 
-temp_values = night_temp
+temp_list = []
+for temperature in temperatures:
+    temp_text = temperature.get_text().replace('°C', '')
+    temp_value = int(temp_text[:-1])
+    temp_list.append(temp_value)
 
-data = {'weekday': week_day, 'temperature': temp_values}
+
+min_length = min(len(week_day), len(temp_list))
 
 
-df=pd.DataFrame(data)
+reorder_weekdays = week_day[:min_length]
+reorder_temp = temp_list[:min_length]
 
-df_sorted=df.sort_values(by='temperature')
+week_day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+data = {
+    'weekday': reorder_weekdays,
+    'temperature': reorder_temp
+}
+
+
+df = pd.DataFrame(data)
+df_sorted = df.sort_values(by=['weekday'], key=lambda x: pd.Categorical(x, categories=week_day_order, ordered=True))
+
+plt.figure(figsize=(12,5))
 plt.bar(df_sorted['weekday'], df_sorted['temperature'])
 
 plt.xlabel('savaites diena')
 plt.ylabel('temperatura')
-plt.title('Oro prognoze Vilniuje')
+plt.title('Oru prognoze Vilniuje')
 plt.show()
-
+print(df)
 
 
 
